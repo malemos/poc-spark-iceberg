@@ -19,15 +19,13 @@ O projeto roda **localmente via Docker** e está preparado para futura execuçã
 
 ## 📁 Estrutura do projeto
 
-├── common/ # Libs Python reutilizáveis
-├── jobs/ # Jobs Spark (Silver, validação)
-├── scripts/ # Geradores de dados fake (Bronze)
-├── libs/ # Binários Spark e Iceberg
-├── work/ # Dados locais (não versionados)
-├── Dockerfile
-├── entrypoint.sh
-└── README.md
-
+- **common/** – Bibliotecas Python reutilizáveis
+- **jobs/** – Jobs Spark (consolidação Silver e validações)
+- **scripts/** – Geradores de dados fake (simulação Kafka → Bronze)
+- **libs/** – Binários do Spark e JARs do Iceberg
+- **work/** – Dados locais e warehouse Iceberg (não versionado)
+- **Dockerfile** – Ambiente Spark local
+- **entrypoint.sh** – Inicialização do Spark
 ---
 ## 📦 Download das dependências (obrigatório)
 
@@ -48,12 +46,12 @@ libs/
 └── iceberg-spark-runtime-3.4_2.12-1.4.3.jar
 
 ---
-# 🐳 Build da imagem Docker
+## 🐳 Build da imagem Docker
 ```
 docker build --network=host -t poc-spark-delta:latest .
 ```
 ---
-# ▶️ Executando o container local
+## ▶️ Executando o container local
 ```
 docker run --rm -it \
   -v "$PWD/work":/work \
@@ -63,7 +61,7 @@ docker run --rm -it \
   poc-spark-delta:latest bash
 ```
 ---
-# 🔎 Validação do ambiente Spark
+## 🔎 Validação do ambiente Spark
 Dentro do container:
 ```
 echo $SPARK_HOME                            # /opt/spark
@@ -72,13 +70,13 @@ spark-submit --version                      # deve imprimir Spark 3.4.1
 ls $SPARK_HOME/jars | grep iceberg          # iceberg-spark-runtime-3.4_2.12-1.4.3.jar
 ```
 ---
-# 🧪 Geração de dados Bronze (entidade única)
+## 🧪 Geração de dados Bronze (entidade única)
 Simula múltiplos tópicos Kafka.
 ```
 spark-submit scripts/gen_fake_schema_teste.py
 ```
 ---
-# 🧪 Geração de dados Bronze (múltiplas entidades)
+## 🧪 Geração de dados Bronze (múltiplas entidades)
 ```
 spark-submit \
   scripts/gen_fake_bronze_multi_entities.py \
@@ -89,7 +87,7 @@ spark-submit \
   --key-space 300
 ```
 ---
-# 📦 Gerando dependency archive (libs Python)
+## 📦 Gerando dependency archive (libs Python)
 Obrigatório para execução distribuída do Spark.
 ```
 cd /opt/app
@@ -97,7 +95,7 @@ rm /work/archive.zip
 zip -r /work/archive.zip common -x "*/__pycache__/*"
 ```
 ---
-# 🔄 Consolidação Bronze → Silver (Iceberg)
+## 🔄 Consolidação Bronze → Silver (Iceberg)
 ```
 spark-submit \
   --py-files /work/archive.zip \
@@ -116,7 +114,7 @@ spark-submit \
   --partition-range 2026-01-01,2026-01-03
 ```
 ---
-# ✅ Validação Bronze vs Silver
+## ✅ Validação Bronze vs Silver
 Verifica:
 
   * contagem
@@ -140,7 +138,7 @@ spark-submit \
   --partition-range 2026-01-01,2026-01-03
 ```
 ---
-# 🧠 Observações importantes
+## 🧠 Observações importantes
 
 * O job Silver é genérico (sem regra de negócio).
 * O MERGE é feito via Apache Iceberg (ACID).
