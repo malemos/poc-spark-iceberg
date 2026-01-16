@@ -1,0 +1,63 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+.env
+
+# =========================
+# Spark / PySpark
+# =========================
+.sparkStaging/
+spark-warehouse/
+derby.log
+metastore_db/
+
+# =========================
+# Iceberg / Lakehouse
+# =========================
+warehouse/
+work/warehouse/
+*.metadata.json
+*.avro
+
+# =========================
+# Dados locais (Bronze / Silver)
+# =========================
+work/bronze/
+work/silver/
+work/gold/
+work/tmp/
+work/archive.zip
+
+# =========================
+# Docker
+# =========================
+*.log
+*.pid
+
+# =========================
+# IDEs
+# =========================
+.vscode/
+.idea/
+*.iml
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Build / artefatos
+# =========================
+dist/
+build/
+*.zip
+work/
+libs/
