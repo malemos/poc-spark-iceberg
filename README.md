@@ -1,4 +1,4 @@
-# PoC Spark + Apache Iceberg (Bronze → Silver)
+## PoC Spark + Apache Iceberg (Bronze → Silver)
 
 Prova de conceito de um pipeline **Lakehouse** usando **Apache Spark** e **Apache Iceberg**, com ingestão simulada via Kafka, geração de dados fake na camada Bronze, consolidação genérica na camada Silver via `MERGE INTO` e validação de consistência entre camadas.
 
@@ -6,7 +6,7 @@ O projeto roda **localmente via Docker** e está preparado para futura execuçã
 
 ---
 
-## 🧱 Stack
+## Stack
 
 - Apache Spark 3.4.1
 - Apache Iceberg 1.4.3
@@ -17,7 +17,7 @@ O projeto roda **localmente via Docker** e está preparado para futura execuçã
 
 ---
 
-## 📁 Estrutura do projeto
+## Estrutura do projeto
 
 - **common/** – Bibliotecas Python reutilizáveis
 - **jobs/** – Jobs Spark (consolidação Silver e validações)
@@ -27,7 +27,7 @@ O projeto roda **localmente via Docker** e está preparado para futura execuçã
 - **Dockerfile** – Ambiente Spark local
 - **entrypoint.sh** – Inicialização do Spark
 ---
-## 📦 Download das dependências (obrigatório)
+## Download das dependências (obrigatório)
 
 Antes do build da imagem, faça o download dos binários necessários.
 
@@ -42,12 +42,12 @@ wget https://archive.apache.org/dist/spark/spark-3.4.1/spark-3.4.1-bin-hadoop3.t
 wget https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.4_2.12/1.4.3/iceberg-spark-runtime-3.4_2.12-1.4.3.jar
 ```
 ---
-## 🐳 Build da imagem Docker
+## Build da imagem Docker
 ```
 docker build --network=host -t poc-spark-delta:latest .
 ```
 ---
-## ▶️ Executando o container local
+## Executando o container local
 ```
 docker run --rm -it \
   --network=host \
@@ -58,7 +58,7 @@ docker run --rm -it \
   poc-spark-delta:latest bash
 ```
 ---
-## 🔎 Validação do ambiente Spark
+## Validação do ambiente Spark
 Dentro do container:
 ```
 echo $SPARK_HOME                            # /opt/spark
@@ -67,13 +67,13 @@ spark-submit --version                      # deve imprimir Spark 3.4.1
 ls $SPARK_HOME/jars | grep iceberg          # iceberg-spark-runtime-3.4_2.12-1.4.3.jar
 ```
 ---
-## 🧪 Geração de dados Bronze (entidade única)
+## Geração de dados Bronze (entidade única)
 Simula múltiplos tópicos Kafka.
 ```
 spark-submit scripts/gen_fake_schema_teste.py
 ```
 ---
-## 🧪 Geração de dados Bronze (múltiplas entidades)
+## Geração de dados Bronze (múltiplas entidades)
 ```
 spark-submit \
   scripts/gen_fake_bronze_multi_entities.py \
@@ -84,7 +84,7 @@ spark-submit \
   --key-space 300
 ```
 ---
-## 📦 Gerando dependency archive (libs Python)
+## Gerando dependency archive (libs Python)
 Obrigatório para execução distribuída do Spark.
 ```
 cd /opt/app
@@ -92,7 +92,7 @@ rm /work/archive.zip
 zip -r /work/archive.zip common -x "*/__pycache__/*"
 ```
 ---
-## 🔄 Consolidação Bronze → Silver (Iceberg)
+## Consolidação Bronze → Silver (Iceberg)
 ```
 spark-submit \
   --py-files /work/archive.zip \
@@ -117,7 +117,7 @@ spark-submit \
   --partition-range 2026-01-01,2026-01-03
 ```
 ---
-## ✅ Validação Bronze vs Silver
+## Validação Bronze vs Silver
 Verifica:
 
   * contagem
@@ -141,7 +141,7 @@ spark-submit \
   --partition-range 2026-01-01,2026-01-03
 ```
 ---
-## 🧠 Observações importantes
+## Observações importantes
 
 * O job Silver é genérico (sem regra de negócio).
 * O MERGE é feito via Apache Iceberg (ACID).
