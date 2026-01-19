@@ -1,4 +1,7 @@
 import argparse
+
+from datetime import datetime
+
 from typing import List
 from pyspark.sql import SparkSession
 
@@ -123,9 +126,10 @@ def resolve_partition_values(args) -> List[str]:
 
 def main():
     args = parse_args()
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     spark = build_spark(
-        app_name=f"poc-silver-iceberg-{args.database}.{args.table}"
+        app_name=f"poc-silver-iceberg-{args.database}.{args.table}-{now}"
     )
 
     try:

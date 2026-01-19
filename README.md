@@ -50,6 +50,7 @@ docker build --network=host -t poc-spark-delta:latest .
 ## ▶️ Executando o container local
 ```
 docker run --rm -it \
+  --network=host \
   -v "$PWD/work":/work \
   -v "$PWD/common":/opt/app/common \
   -v "$PWD/jobs":/opt/app/jobs \
@@ -95,6 +96,12 @@ zip -r /work/archive.zip common -x "*/__pycache__/*"
 ```
 spark-submit \
   --py-files /work/archive.zip \
+  --driver-memory 4g \
+  --executor-memory 4g \
+  --conf spark.executor.memoryOverhead=1g \
+  --conf spark.sql.shuffle.partitions=8 \
+  --conf spark.sql.adaptive.enabled=true \
+  --conf spark.sql.adaptive.coalescePartitions.enabled=true \
   --conf spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions \
   --conf spark.sql.catalog.local=org.apache.iceberg.spark.SparkCatalog \
   --conf spark.sql.catalog.local.type=hadoop \

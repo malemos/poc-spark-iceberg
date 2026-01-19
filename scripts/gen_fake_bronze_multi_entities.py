@@ -54,9 +54,11 @@ def parse_args():
 # ------------------------------------------------------------------------------
 
 def build_spark():
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
     return (
         SparkSession.builder
-        .appName("gen-fake-bronze-multi-entities")
+        .appName(f"gen-fake-bronze-multi-entities-{now}")
         .getOrCreate()
     )
 
