@@ -70,18 +70,31 @@ ls $SPARK_HOME/jars | grep iceberg          # iceberg-spark-runtime-3.4_2.12-1.4
 ## Geração de dados Bronze (entidade única)
 Simula múltiplos tópicos Kafka.
 ```
-spark-submit scripts/gen_fake_schema_teste.py
+spark-submit \
+  --driver-memory 4g \
+  --executor-memory 4g \
+  --conf spark.executor.memoryOverhead=1g \
+  --conf spark.sql.shuffle.partitions=8 \
+  --conf spark.sql.adaptive.enabled=true \
+  --conf spark.sql.adaptive.coalescePartitions.enabled=true \
+  scripts/gen_fake_schema_teste.py
 ```
 ---
 ## Geração de dados Bronze (múltiplas entidades)
 ```
 spark-submit \
+  --driver-memory 4g \
+  --executor-memory 4g \
+  --conf spark.executor.memoryOverhead=1g \
+  --conf spark.sql.shuffle.partitions=8 \
+  --conf spark.sql.adaptive.enabled=true \
+  --conf spark.sql.adaptive.coalescePartitions.enabled=true \
   scripts/gen_fake_bronze_multi_entities.py \
   --entities cliente,produto,pedido,fatura \
   --start-date 2026-01-01 \
-  --end-date 2026-01-03 \
-  --rows-per-day 1000 \
-  --key-space 300
+  --end-date 2026-01-20 \
+  --rows-per-day 1000000 \
+  --key-space 3000
 ```
 ---
 ## Gerando dependency archive (libs Python)

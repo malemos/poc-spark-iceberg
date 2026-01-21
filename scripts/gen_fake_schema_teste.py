@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 OUTPUT_PATH = "file:///work/bronze/schema_teste/tabela_teste"
 
 START_DATE = "2026-01-01"
-END_DATE   = "2026-01-03"
+END_DATE   = "2026-01-20"
 
 ROWS_PER_DAY = 10000000
 KEY_SPACE    = 5000  # força repetição de idt_teste entre dias
